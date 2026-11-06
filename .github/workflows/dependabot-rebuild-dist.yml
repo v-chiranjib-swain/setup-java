@@ -1,0 +1,33 @@
+name: Rebuild Dependabot dist
+
+on:
+  pull_request:
+    branches:
+      - test/dependabot-rebuild
+    types: [opened, reopened, synchronize]
+    paths:
+      - package.json
+      - package-lock.json
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: dependabot-rebuild-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  rebuild:
+    if: >-
+      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    uses: v-chiranjib-swain/reusable-workflows/.github/workflows/dependabot-rebuild-dist.yml@3860e6b77ef2688557c82c3e96dda8ad8a6c23e9
+    with:
+      node-version: '24.x'
+      dist-path: dist
+      install-command: npm ci --ignore-scripts
+      build-command: npm run build
+    secrets:
+      token: ${{ secrets.DEPENDABOT_BUILD_TOKEN }}
