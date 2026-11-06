@@ -2,12 +2,11 @@ version: 2
 updates:
   - package-ecosystem: 'npm'
     directory: '/'
+    target-branch: 'test/dependabot-rebuild'
     schedule:
-      interval: 'monthly'
-    cooldown:
-      default-days: 7
+      interval: 'daily'
     groups:
-      monthly-npm-updates:
+      test-npm-updates:
         applies-to: 'version-updates'
         patterns:
           - '*'
